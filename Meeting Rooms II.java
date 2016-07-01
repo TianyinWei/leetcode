@@ -15,7 +15,9 @@ return 2.
  *     Interval(int s, int e) { start = s; end = e; }
  * }
  */
-public class Solution { // greedy
+ 
+ /*****method 1 greedy*****/
+public class Solution { 
     public int minMeetingRooms(Interval[] intervals) {
         if (intervals == null || intervals.length == 0) return 0;
         if (intervals.length == 1)  return 1;
@@ -34,5 +36,41 @@ public class Solution { // greedy
             else merge++;
         }
         return room;
+    }
+}
+
+/*****method 2 heap*****/
+public class Solution { // reference:   http://www.importnew.com/6932.html
+    public int minMeetingRooms(Interval[] intervals) {
+        if (intervals == null || intervals.length == 0) return 0;
+        if (intervals.length == 1)  return 1;
+        Arrays.sort(intervals, new Comparator<Interval>(){
+            public int compare(Interval a, Interval b) {
+                return (a.start - b.start);
+            }
+        });
+        
+        PriorityQueue<Interval> heap = new PriorityQueue<Interval>(intervals.length, new Comparator<Interval>(){
+            public int compare(Interval a, Interval b) {
+                return (a.end - b.end);
+            }
+        });
+        
+        heap.offer(intervals[0]);
+        
+        for (int i = 1; i < intervals.length; i++) {
+            Interval cur = heap.poll();
+            
+            if (intervals[i].start < cur.end) { // need a new room for intervals[i]
+                heap.offer(intervals[i]);
+            } 
+            if (intervals[i].start >= cur.end) { // does not need a new room for intervals[i]
+                cur.end = intervals[i].end; // merge the two time slots
+            }
+            
+            heap.offer(cur);    // add the time slot back to the heap. it is a room.
+        }
+        
+        return heap.size();
     }
 }
