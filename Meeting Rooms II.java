@@ -41,18 +41,19 @@ public class Solution {
 
 /*****method 2 heap*****/
 public class Solution { // reference:   http://www.importnew.com/6932.html
-    public int minMeetingRooms(Interval[] intervals) {
+   public int minMeetingRooms(Interval[] intervals) {
         if (intervals == null || intervals.length == 0) return 0;
-        if (intervals.length == 1)  return 1;
+        
+        //sort array by start time
         Arrays.sort(intervals, new Comparator<Interval>(){
-            public int compare(Interval a, Interval b) {
-                return (a.start - b.start);
-            }
+            public int compare(Interval a, Interval b)  {
+                return a.start - b.start;            }
         });
         
-        PriorityQueue<Interval> heap = new PriorityQueue<Interval>(intervals.length, new Comparator<Interval>(){
-            public int compare(Interval a, Interval b) {
-                return (a.end - b.end);
+        //create a priority queue ordered by the end time of each interval
+        PriorityQueue<Interval> heap = new PriorityQueue<Interval>(intervals.length, new Comparator<Interval>() {
+            public int compare(Interval a, Interval b)  {
+                return a.end - b.end;
             }
         });
         
@@ -60,15 +61,15 @@ public class Solution { // reference:   http://www.importnew.com/6932.html
         
         for (int i = 1; i < intervals.length; i++) {
             Interval cur = heap.poll();
-            
-            if (intervals[i].start < cur.end) { // need a new room for intervals[i]
+            if (intervals[i].start >= cur.end)  {   
+                //the latter interval starts after the previous one ends. merge the two time slots
+                cur.end = intervals[i].end;
+            }   else {
+                //arrange a new room
                 heap.offer(intervals[i]);
-            } 
-            if (intervals[i].start >= cur.end) { // does not need a new room for intervals[i]
-                cur.end = intervals[i].end; // merge the two time slots
             }
             
-            heap.offer(cur);    // add the time slot back to the heap. it is a room.
+            heap.offer(cur);    //put back. remember!
         }
         
         return heap.size();
