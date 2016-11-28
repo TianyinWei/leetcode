@@ -7,25 +7,15 @@ public class Solution {
         HashMap<Integer, ArrayList<Integer>> build = new HashMap<>();
         Queue<Integer> nodes = new LinkedList<Integer>();
         int len = edges.length;
-        for (int i = 0; i < len; i++) {
-            build.put(i, new ArrayList<Integer>());
+        for (int i = 0; i < n; i++) {
+            ArrayList<Integer> list = new ArrayList<Integer>();
+            build.put(i, list);
         }
         for (int i = 0; i < len; i++) {
-            if (build.containsKey(edges[i][0])) {
                 build.get(edges[i][0]).add(edges[i][1]);
-            }   else {
-                ArrayList<Integer> tempList = new ArrayList<Integer>();
-                tempList.add(edges[i][1]);
-                build.put(edges[i][0], tempList);
-            }
-            
-            if (build.containsKey(edges[i][1])) {
+        
                 build.get(edges[i][1]).add(edges[i][0]);
-            }   else {
-                ArrayList tempList = new ArrayList<Integer>();
-                tempList.add(edges[i][0]);
-                build.put(edges[i][1], tempList);
-            }
+            
         }
         
         boolean[] visited = new boolean[n];
